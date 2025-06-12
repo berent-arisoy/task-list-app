@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Task List App</title>
+  <style>
+    /* Reset and base */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      margin: 0;
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background: white;
+      padding: 2rem 3rem;
+      max-width: 480px;
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #1e88e5;
+      user-select: none;
+    }
+
+    form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"] {
+      flex-grow: 1;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus {
+      border-color: #1e88e5;
+      outline: none;
+    }
+
+    button {
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0 1.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #1565c0;
+    }
+    button:disabled {
+      background-color: #a0b8d8;
+      cursor: not-allowed;
+    }
+
+    ul#taskList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    ul#taskList li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.2s ease;
+    }
+    ul#taskList li:hover {
+      background-color: #f0f4fb;
+    }
+
+    ul#taskList li:last-child {
+      border-bottom: none;
+    }
+
+    ul#taskList li span {
+      flex-grow: 1;
+      font-size: 1rem;
+      word-break: break-word;
+    }
+
+    ul#taskList li span.completed {
+      text-decoration: line-through;
+      color: #888;
+      font-style: italic;
+    }
+
+    ul#taskList li input[type="checkbox"] {
+      cursor: pointer;
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    ul#taskList li button {
+      background-color: transparent;
+      color: #1e88e5;
+      border: 1px solid #1e88e5;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      user-select: none;
+    }
+    ul#taskList li button:hover {
+      background-color: #1e88e5;
+      color: white;
+    }
+
+    #errorMessage {
+      color: #d32f2f;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      min-height: 1.2rem;
+      user-select: none;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 1.5rem 1.5rem;
+      }
+      button {
+        padding: 0 0.8rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+      user-select: none;
+    }
+
+    .filters button {
+      padding: 0.5rem 1rem;
+      border: 1.5px solid #1e88e5;
+      background: white;
+      color: #1e88e5;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .filters button.active,
+    .filters button:hover {
+      background-color: #1e88e5;
+      color: white;
+    }
+
+    .task-time {
+      font-size: 0.8rem;
+      color: #999;
+      margin-left: 0.8rem;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+        body.dark {
+      background: #1e1e1e;
+      color: #f1f1f1;
+    }
+
+    body.dark .container {
+      background: #2a2a2a;
+      box-shadow: 0 4px 8px rgb(255 255 255 / 0.05);
+    }
+
+    body.dark input[type="text"] {
+      background-color: #444;
+      border-color: #777;
+      color: #fff;
+    }
+
+    body.dark input[type="text"]:focus {
+      border-color: #90caf9;
+    }
+
+    body.dark button {
+      background-color: #1565c0;
+      color: white;
+    }
+
+    body.dark button:hover {
+      background-color: #0d47a1;
+    }
+
+    body.dark .filters button {
+      background-color: #2a2a2a;
+      color: #90caf9;
+      border-color: #90caf9;
+    }
+
+    body.dark .filters button.active,
+    body.dark .filters button:hover {
+      background-color: #90caf9;
+      color: #000;
+    }
+
+    body.dark ul#taskList li {
+      border-color: #444;
+    }
+
+    body.dark ul#taskList li span.completed {
+      color: #bbb;
+    }
+
+  </style>
+</head>
+<body>
+  <main class="container" role="main" aria-labelledby="appTitle">
+    <h1 id="appTitle">My Task List</h1>
+
+    <form id="taskForm" aria-label="Add new task">
+      <input
+        type="text"
+        id="taskInput"
+        placeholder="Enter a new task"
+        aria-required="true"
+        aria-describedby="errorMessage"
+        autocomplete="off"
+      />
+      <button type="submit" id="addTaskBtn" disabled>Add</button>
+    </form>
+
+    <div id="errorMessage" role="alert" aria-live="assertive"></div>
+
+    <div class="filters" role="group" aria-label="Filter tasks">
+      <button id="filterAll" class="active" aria-pressed="true">All</button>
+      <button id="filterActive" aria-pressed="false">Active</button>
+      <button id="filterCompleted" aria-pressed="false">Completed</button>
+    </div>
+
+    <ul id="taskList" aria-live="polite" aria-relevant="additions removals"></ul>
+  </main>
+  <button id="darkModeToggle" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+  <script src="app.js"></script>
+</body>
+</html>
